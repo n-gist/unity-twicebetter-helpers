@@ -1,10 +1,10 @@
 ﻿#if TRUE && UNITY_EDITOR && UNITY_EDITOR_WIN
-using UnityEditor;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using UnityEditor;
 
-namespace twicebetter {
+namespace twicebetter.helpers {
 
     [InitializeOnLoad]
     public static class TB_ChangesChecker {
@@ -20,6 +20,7 @@ namespace twicebetter {
             lastFocusTime = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
             refreshed = false;
         }
+        
         private static void Update() {
             if (focused) {
                 if (!refreshed) {
@@ -42,6 +43,7 @@ namespace twicebetter {
                 }
             }
         }
+        
         private static int FocusedWindowProcessId() {
             var foregroundHandle = GetForegroundWindow();
             if (foregroundHandle != IntPtr.Zero) {
@@ -50,8 +52,10 @@ namespace twicebetter {
             }
             return -1;
         }
+        
         [DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
         private static extern IntPtr GetForegroundWindow();
+        
         [DllImport("user32.dll", CharSet=CharSet.Auto, ExactSpelling=true)]
         private static extern int GetWindowThreadProcessId(IntPtr h, out int pId);
     }

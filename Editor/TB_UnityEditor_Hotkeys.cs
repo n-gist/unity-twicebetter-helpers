@@ -1,16 +1,19 @@
 ﻿#if TRUE && UNITY_EDITOR
-namespace twicebetter {
-    using UnityEngine;
-    using UnityEditor;
+using UnityEngine;
+using UnityEditor;
 
+namespace twicebetter.helpers {
+    
     [InitializeOnLoad]
     public static class TB_UnityEditor_Hotkeys {
+        
         static TB_UnityEditor_Hotkeys() {
             System.Reflection.FieldInfo gehInfo = typeof(EditorApplication).GetField("globalEventHandler", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
             EditorApplication.CallbackFunction gehValue = (EditorApplication.CallbackFunction)gehInfo.GetValue(null);
             gehValue += UnityEditor_Hotkeys_KeyPress;
             gehInfo.SetValue(null, gehValue);
         }
+        
         static void UnityEditor_Hotkeys_KeyPress() {
             var e = Event.current;
             if (!(e.control) || e.type != EventType.KeyDown) return;

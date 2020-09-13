@@ -1,16 +1,16 @@
 #if FALSE && UNITY_EDITOR
-namespace twicebetter {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Text;
-    using UnityEditor;
-    using UnityEditor.Compilation;
-    using UnityEngine;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
+using UnityEditor;
+using UnityEditor.Compilation;
+using UnityEngine;
 
+namespace twicebetter.helpers {
+    
     [InitializeOnLoad]
-    public class TB_AsmdefDebug
-    {
+    public class TB_AsmdefDebug {
         const string AssemblyReloadEventsEditorPref = "AssemblyReloadEventsTime";
         const string AssemblyCompilationEventsEditorPref = "AssemblyCompilationEvents";
         static readonly int ScriptAssembliesPathLen = "Library/ScriptAssemblies/".Length;
@@ -21,29 +21,25 @@ namespace twicebetter {
         static StringBuilder s_BuildEvents = new StringBuilder();
         static double s_CompilationTotalTime;
 
-        static TB_AsmdefDebug()
-        {
+        static TB_AsmdefDebug() {
             CompilationPipeline.assemblyCompilationStarted += CompilationPipelineOnAssemblyCompilationStarted;
             CompilationPipeline.assemblyCompilationFinished += CompilationPipelineOnAssemblyCompilationFinished;
             AssemblyReloadEvents.beforeAssemblyReload += AssemblyReloadEventsOnBeforeAssemblyReload;
             AssemblyReloadEvents.afterAssemblyReload += AssemblyReloadEventsOnAfterAssemblyReload;
         }
 
-        static void CompilationPipelineOnAssemblyCompilationStarted(string assembly)
-        {
+        static void CompilationPipelineOnAssemblyCompilationStarted(string assembly) {
             s_StartTimes[assembly] = DateTime.UtcNow;
         }
 
-        static void CompilationPipelineOnAssemblyCompilationFinished(string assembly, CompilerMessage[] arg2)
-        {
+        static void CompilationPipelineOnAssemblyCompilationFinished(string assembly, CompilerMessage[] arg2) {
             var timeSpan = DateTime.UtcNow - s_StartTimes[assembly];
             s_CompilationTotalTime += timeSpan.TotalMilliseconds;
             s_BuildEvents.AppendFormat("{0:0.00}s {1}\n", timeSpan.TotalMilliseconds / 1000f,
                 assembly.Substring(ScriptAssembliesPathLen, assembly.Length - ScriptAssembliesPathLen));
         }
 
-        static void AssemblyReloadEventsOnBeforeAssemblyReload()
-        {
+        static void AssemblyReloadEventsOnBeforeAssemblyReload() {
             var totalCompilationTimeSeconds = s_CompilationTotalTime / 1000f;
             s_BuildEvents.AppendFormat("compilation total: {0:0.00}s\n", totalCompilationTimeSeconds);
             EditorPrefs.SetString(AssemblyReloadEventsEditorPref, DateTime.UtcNow.ToBinary().ToString());
@@ -51,8 +47,7 @@ namespace twicebetter {
             EditorPrefs.SetString(AssemblyTotalCompilationTimeEditorPref, totalCompilationTimeSeconds.ToString(CultureInfo.InvariantCulture));
         }
 
-        static void AssemblyReloadEventsOnAfterAssemblyReload()
-        {
+        static void AssemblyReloadEventsOnAfterAssemblyReload() {
             var binString = EditorPrefs.GetString(AssemblyReloadEventsEditorPref);
             string[] splitted = EditorPrefs.GetString(AssemblyTotalCompilationTimeEditorPref).Split('.');
             if (splitted.Length != 2) return;
@@ -66,14 +61,12 @@ namespace twicebetter {
             var totalCompilationTimeSeconds = res;
 
             long bin;
-            if (long.TryParse(binString, out bin))
-            {
+            if (long.TryParse(binString, out bin)) {
                 var date = DateTime.FromBinary(bin);
                 var time = DateTime.UtcNow - date;
                 var compilationTimes = EditorPrefs.GetString(AssemblyCompilationEventsEditorPref);
                 var totalTimeSeconds = totalCompilationTimeSeconds + time.TotalSeconds;
-                if (!string.IsNullOrEmpty(compilationTimes))
-                {
+                if (!string.IsNullOrEmpty(compilationTimes)) {
                     Debug.Log($"Compilation Report: {totalTimeSeconds:F2} seconds\n" + compilationTimes + "Assembly Reload Time: " + time.TotalSeconds + "s\n");
                 }
             }

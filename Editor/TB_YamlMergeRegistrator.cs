@@ -1,9 +1,10 @@
 ﻿#if FALSE && UNITY_EDITOR
+using System;
 using UnityEngine;
 using UnityEditor;
-using System;
 
-namespace twicebetter {
+namespace twicebetter.helpers {
+    
     [InitializeOnLoad]
     public class TB_YamlMergeRegistrator {
         const string prefsKey = "TB_YMR_rv";
