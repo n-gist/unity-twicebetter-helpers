@@ -17,21 +17,25 @@ namespace twicebetter.helpers {
         // [MenuItem("Window/Twice Better/YamlMerge registration")]
         static void YamlMergeRegister() {
             try {
-                var UnityYAMLMergePath = EditorApplication.applicationContentsPath + "/Tools" + "/UnityYAMLMerge.exe";
-                ExecuteGitWithParams("config --global merge.unityyamlmerge.name \"UnityYamlMerge\"");
-                ExecuteGitWithParams("config --global merge.unityyamlmerge.recursive binary");
-                ExecuteGitWithParams("config --global merge.unityyamlmerge.driver \"'" + UnityYAMLMergePath + "' merge -p -h --force --fallback none %O %B %A %A\"");
+                var os = SystemInfo.operatingSystemFamily;
+                if (os != OperatingSystemFamily.Windows && os != OperatingSystemFamily.MacOSX) return;
+                var YAMLexecutableName = "UnityYAMLMerge";
+                if (os == OperatingSystemFamily.Windows) YAMLexecutableName += ".exe";
+                var UnityYAMLMergePath = EditorApplication.applicationContentsPath + "/Tools" + "/" + YAMLexecutableName;
+                ExecuteGitWithParams("config merge.unityyamlmerge.name \"UnityYamlMerge\"");
+                ExecuteGitWithParams("config merge.unityyamlmerge.recursive binary");
+                ExecuteGitWithParams("config merge.unityyamlmerge.driver \"'" + UnityYAMLMergePath + "' merge -p -h --force --fallback none %O %B %A %A\"");
                 EditorPrefs.SetString(prefsKey, Application.unityVersion);
-                Debug.Log($"Succesfuly registered UnityYAMLMerge with path {UnityYAMLMergePath}");
+                Debug.Log("UnityYAMLMerge registered");
             } catch (Exception e) {
                 Debug.Log($"Fail to register UnityYAMLMerge with error: {e}");
             }
         }
 
         // [MenuItem("Window/Twice Better/YamlMerge unregistration")]
-        static void YamlMergeUnRegister() {
-            ExecuteGitWithParams("config --global --remove-section merge.unityyamlmerge");
-            Debug.Log($"Succesfuly unregistered UnityYAMLMerge");
+        static void YamlMergeUnregister() {
+            ExecuteGitWithParams("config --remove-section merge.unityyamlmerge");
+            Debug.Log($"UnityYAMLMerge unregistered");
         }
 
         static string ExecuteGitWithParams(string param) {

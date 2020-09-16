@@ -18,7 +18,6 @@ namespace twicebetter.helpers {
             var e = Event.current;
             if (!(e.control) || e.type != EventType.KeyDown) return;
             
-            
             switch (e.keyCode) {
                 case KeyCode.F7:
                     if (e.alt) {
