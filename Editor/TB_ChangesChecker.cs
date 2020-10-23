@@ -20,6 +20,7 @@ namespace twicebetter.helpers {
             EditorApplication.update += Update;
             lastFocusTime = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
             refreshed = false;
+            UpdateSettings();
         }
         
         private static void Update() {
@@ -31,7 +32,7 @@ namespace twicebetter.helpers {
                             long nowTime = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
                             if (nowTime > lastFocusTime + 20) {
                                 refreshed = true;
-                                refreshDuringPlaying = EditorPrefs.GetInt("ScriptCompilationDuringPlay", -1) == 0;
+                                if (!EditorApplication.isPlaying) UpdateSettings();
                                 AssetDatabase.Refresh();
                             }
                         }
@@ -44,6 +45,9 @@ namespace twicebetter.helpers {
                     refreshed = false;
                 }
             }
+        }
+        private static void UpdateSettings() {
+            refreshDuringPlaying = EditorPrefs.GetInt("ScriptCompilationDuringPlay", -1) == 0;
         }
         
         private static int FocusedWindowProcessId() {
