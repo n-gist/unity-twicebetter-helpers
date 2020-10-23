@@ -12,6 +12,7 @@ namespace twicebetter.helpers {
         private static bool focused;
         private static long lastFocusTime;
         private static bool refreshed;
+        private static bool refreshDuringPlaying;
 
         static TB_ChangesChecker() {
             editorPID = Process.GetCurrentProcess().Id;
@@ -24,12 +25,13 @@ namespace twicebetter.helpers {
         private static void Update() {
             if (focused) {
                 if (!refreshed) {
-                    if (   !EditorApplication.isPlaying
+                    if (   (!EditorApplication.isPlaying || refreshDuringPlaying)
                         && !EditorApplication.isUpdating
                         && !EditorApplication.isCompiling) {
                             long nowTime = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
                             if (nowTime > lastFocusTime + 20) {
                                 refreshed = true;
+                                refreshDuringPlaying = EditorPrefs.GetInt("ScriptCompilationDuringPlay", -1) == 0;
                                 AssetDatabase.Refresh();
                             }
                         }
