@@ -32,10 +32,11 @@ namespace twicebetter.helpers {
                     break;
             }
             
-            if (!(e.control)) return;
+            if (SystemInfo.operatingSystemFamily == OperatingSystemFamily.Windows && !e.control) return;
             
             switch (e.keyCode) {
                 case KeyCode.F7:
+                case KeyCode.F14:
                     if (e.alt) {
                         SceneView.FrameLastActiveSceneView();
                         break;
@@ -53,6 +54,7 @@ namespace twicebetter.helpers {
                     }
                     break;
                 case KeyCode.F8:
+                case KeyCode.F13:
                     Tools.current = Tool.None;
                     break;
             }
