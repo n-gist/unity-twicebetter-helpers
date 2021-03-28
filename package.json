@@ -1,0 +1,15 @@
+{
+    "name": "com.twicebetter.helpers",
+    "displayName": "TwiceBetter Helpers",
+    "author": {
+        "name": "Gist"
+    },
+    "version": "1.0.0",
+    "unity": "2018.1",
+    "description": "Editor improvements",
+    "keywords": [],
+    "category": "Editor Workflow",
+    "dependencies": {
+        "com.unity.modules.imgui": "1.0.0"
+    }
+}

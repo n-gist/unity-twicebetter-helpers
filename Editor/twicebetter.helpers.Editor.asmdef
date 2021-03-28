@@ -1,5 +1,6 @@
 {
     "name": "twicebetter.helpers.Editor",
+    "rootNamespace": "",
     "references": [],
     "includePlatforms": [
         "Editor"
