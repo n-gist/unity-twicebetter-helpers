@@ -1,37 +1,35 @@
-﻿#if FALSE && UNITY_EDITOR
 using System;
 using UnityEngine;
 using UnityEditor;
 
 namespace twicebetter.helpers {
-    
-    [InitializeOnLoad]
-    public class TB_YamlMergeRegistrator {
+    static class YamlMergeRegistrator {
         const string prefsKey = "TB_YMR_rv";
-        const string YAMLexecutableName = "UnityYAMLMerge";
         const string gitExecutableName = "git";
         const string configstring = "config merge.unityyamlmerge.";
+        const string YAMLexecutableName = "UnityYAMLMerge";
 
-        static TB_YamlMergeRegistrator() {
+        public static void Register() {
             var installedUnityKey = EditorPrefs.GetString(prefsKey);
             if (installedUnityKey != Application.unityVersion) YamlMergeRegister();
         }
         
         // [MenuItem("Window/Twice Better/YamlMerge registration")]
         static void YamlMergeRegister() {
+            string YAMLexeName = YAMLexecutableName;
             try {
                 var os = SystemInfo.operatingSystemFamily;
                 if (os != OperatingSystemFamily.Windows && os != OperatingSystemFamily.MacOSX) return;
-                if (os == OperatingSystemFamily.Windows) YAMLexecutableName += ".exe";
-                var UnityYAMLMergePath = EditorApplication.applicationContentsPath + "/Tools" + "/" + YAMLexecutableName;
+                if (os == OperatingSystemFamily.Windows) YAMLexeName += ".exe";
+                var UnityYAMLMergePath = EditorApplication.applicationContentsPath + "/Tools" + "/" + YAMLexeName;
                 
                 ExecuteGitWithParams(configstring + "name \"UnityYamlMerge\"");
                 ExecuteGitWithParams(configstring + "recursive binary");
                 ExecuteGitWithParams(configstring + "driver \"'" + UnityYAMLMergePath + "' merge -p -h --force --fallback none %O %B %A %A\"");
                 EditorPrefs.SetString(prefsKey, Application.unityVersion);
-                Debug.Log($"{YAMLexecutableName} registered");
+                Debug.Log($"{YAMLexeName} registered");
             } catch (Exception e) {
-                Debug.Log($"Fail to register {YAMLexecutableName} with error: {e}");
+                Debug.Log($"Fail to register {YAMLexeName} with error: {e}");
             }
         }
 
@@ -63,4 +61,3 @@ namespace twicebetter.helpers {
         }
     }
 }
-#endif

@@ -1,8 +1,8 @@
 {
     "name": "com.twicebetter.helpers",
-    "displayName": "TwiceBetter Helpers",
+    "displayName": "Helpers",
     "author": {
-        "name": "Gist"
+        "name": "TwiceBetter"
     },
     "version": "1.0.0",
     "unity": "2018.1",

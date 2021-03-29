@@ -1,11 +1,8 @@
-#if FALSE && UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 
 namespace twicebetter.helpers {
-    
-    [InitializeOnLoad]
-    internal static class TB_KeepSceneFocused {
+    static class SceneFocusKeeper {
         private const  bool          forceFocusSceneOnPlay = true;
         private static SceneView     sceneWindow;
         private static EditorWindow  gameWindow;
@@ -13,32 +10,36 @@ namespace twicebetter.helpers {
         private static bool          oneFrameSkipped;
         private static System.Action focusFunc;
         
-        static TB_KeepSceneFocused() {
+        public static void Initialize() {
             FindSceneWindow();
             FindGameWindow();
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
         }
+        public static void Shutdown() {
+            EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+        }
         
-        private static void FindSceneWindow() {
+        static void FindSceneWindow() {
             if (sceneWindow != null) return;
             var sceneWindows = Resources.FindObjectsOfTypeAll<SceneView>();
             if (sceneWindows != null && sceneWindows.Length > 0) sceneWindow = sceneWindows[0];
         }
         
-        private static readonly System.Type gameWindowType = typeof(UnityEditor.EditorWindow).Assembly.GetType("UnityEditor.PlayModeView");
-        private static void FindGameWindow() {
+        static readonly System.Type gameWindowType = typeof(UnityEditor.EditorWindow).Assembly.GetType("UnityEditor.PlayModeView");
+        static void FindGameWindow() {
             if (gameWindow != null) return;
             var gameWindows = Resources.FindObjectsOfTypeAll(gameWindowType);
             if (gameWindows != null && gameWindows.Length > 0) gameWindow = (EditorWindow)gameWindows[0];
         }
         
-        private static void StoreSceneNeedFocus() {
+        static void StoreSceneNeedFocus() {
             FindSceneWindow();
             if (sceneWindow != null) sceneNeedFocus = sceneWindow.hasFocus;
             else sceneNeedFocus = false;
         }
         
-        private static void OnPlayModeStateChanged(PlayModeStateChange stateChange) {
+        static void OnPlayModeStateChanged(PlayModeStateChange stateChange) {
             switch (stateChange) {
                 case PlayModeStateChange.ExitingEditMode:
                     StoreSceneNeedFocus();
@@ -71,7 +72,7 @@ namespace twicebetter.helpers {
             }
         }
         
-        private static void OnPauseStateChanged(PauseState pauseState) {
+        static void OnPauseStateChanged(PauseState pauseState) {
             switch (pauseState) {
                 case PauseState.Paused:
                     StoreSceneNeedFocus();
@@ -86,13 +87,13 @@ namespace twicebetter.helpers {
             }
         }
         
-        private static void FocusOnUpdate(System.Action focusFunc) {
-            TB_KeepSceneFocused.focusFunc = focusFunc;
+        static void FocusOnUpdate(System.Action focusFunc) {
+            SceneFocusKeeper.focusFunc = focusFunc;
             oneFrameSkipped = false;
             EditorApplication.update += OnUpdateFocusFunc;
         }
         
-        private static void OnUpdateFocusFunc() {
+        static void OnUpdateFocusFunc() {
             if (oneFrameSkipped) {
                 EditorApplication.update -= OnUpdateFocusFunc;
                 focusFunc();
@@ -100,15 +101,14 @@ namespace twicebetter.helpers {
             oneFrameSkipped = true;
         }
         
-        private static void FocusSceneWindow() {
+        static void FocusSceneWindow() {
             FindSceneWindow();
             if (sceneWindow != null) sceneWindow.Focus();
         }
         
-        private static void FocusGameWindow() {
+        static void FocusGameWindow() {
             FindGameWindow();
             if (gameWindow != null) gameWindow.Focus();
         }
     }
 }
-#endif
