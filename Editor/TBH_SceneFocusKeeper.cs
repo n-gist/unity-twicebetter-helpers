@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 
 namespace twicebetter.helpers {
-    static class SceneFocusKeeper {
+    static class TBH_SceneFocusKeeper {
         private const  bool          forceFocusSceneOnPlay = true;
         private static SceneView     sceneWindow;
         private static EditorWindow  gameWindow;
@@ -88,7 +88,7 @@ namespace twicebetter.helpers {
         }
         
         static void FocusOnUpdate(System.Action focusFunc) {
-            SceneFocusKeeper.focusFunc = focusFunc;
+            TBH_SceneFocusKeeper.focusFunc = focusFunc;
             oneFrameSkipped = false;
             EditorApplication.update += OnUpdateFocusFunc;
         }

@@ -3,8 +3,8 @@ using UnityEngine;
 using UnityEditor;
 
 namespace twicebetter.helpers {
-    static class YamlMergeRegistrator {
-        const string prefsKey = "TB_YMR_rv";
+    static class TBH_YamlMergeRegistrator {
+        const string prefsKey = "TBH_YMR_rv";
         const string gitExecutableName = "git";
         const string configstring = "config merge.unityyamlmerge.";
         const string YAMLexecutableName = "UnityYAMLMerge";
@@ -14,7 +14,6 @@ namespace twicebetter.helpers {
             if (installedUnityKey != Application.unityVersion) YamlMergeRegister();
         }
         
-        // [MenuItem("Window/Twice Better/YamlMerge registration")]
         static void YamlMergeRegister() {
             string YAMLexeName = YAMLexecutableName;
             try {
@@ -33,7 +32,6 @@ namespace twicebetter.helpers {
             }
         }
 
-        // [MenuItem("Window/Twice Better/YamlMerge unregistration")]
         static void YamlMergeUnregister() {
             ExecuteGitWithParams("config --remove-section merge.unityyamlmerge");
             Debug.Log($"{YAMLexecutableName} unregistered");
