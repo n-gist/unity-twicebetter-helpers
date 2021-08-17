@@ -5,6 +5,7 @@ namespace twicebetter.helpers {
     class TBH_Settings : ScriptableObject {
         // static string GUID;
         const  string lastSettingsPathKey = "TBHSp";
+        const  string noCreationKey = "TBHnc";
         static TBH_Settings settings;
         
         public bool enabled = false;
@@ -12,8 +13,6 @@ namespace twicebetter.helpers {
         public bool keepSceneFocused = false;
         public bool registerYamlMerge = false;
         public TBH_Hotkeys.Settings hotkeys;
-        
-        public TBH_Settings() {}
         
         public void FillDefaults(OperatingSystemFamily os, string user) {
             if (os == OperatingSystemFamily.Windows && user == "Nick") {
@@ -30,6 +29,14 @@ namespace twicebetter.helpers {
                 settings.hotkeys.noTool.key = KeyCode.F8;
                 settings.hotkeys.noTool.ctrl = true;
             }
+        }
+        
+        [MenuItem("Window/Twice Better/Helpers/Settings")]
+        static void MenuSettings() {
+            EditorPrefs.DeleteKey(noCreationKey);
+            Define();
+            TBH.Initialize();
+            if (settings != null) Selection.activeObject = settings;
         }
         
         public static void   Define() {
@@ -57,6 +64,16 @@ namespace twicebetter.helpers {
             }
         }
         static        void   DefineByCreation() {
+            var answeredNo = EditorPrefs.GetBool(noCreationKey, false);
+            if (answeredNo) return;
+            
+            const string title = "TwiceBetter Helpers";
+            if (!EditorUtility.DisplayDialog(title, "No Helpers Settings found for current user, create?", "Yes", "No")) {
+                EditorPrefs.SetBool(noCreationKey, true);
+                EditorUtility.DisplayDialog(title, "You can create settings by selecting Window/Twice Better/Helpers/Settings", "OK");
+                return;
+            }
+            
             settings = ScriptableObject.CreateInstance<TBH_Settings>();
             settings.FillDefaults(SystemInfo.operatingSystemFamily, System.Environment.UserName);
             var path = "Assets/" + SettingsAssetName() + ".asset";
