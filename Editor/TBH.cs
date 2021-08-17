@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using System.Threading.Tasks;
 
 namespace twicebetter.helpers {
     
@@ -8,6 +9,11 @@ namespace twicebetter.helpers {
         static bool initialized;
         
         static TBH() {
+            EditorApplication.update += DelayedInit;
+        }
+        static async void DelayedInit() {
+            EditorApplication.update -= DelayedInit;
+            await Task.Delay(200);
             TBH_Settings.Define();
             Initialize();
         }

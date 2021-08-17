@@ -3,7 +3,8 @@ using UnityEditor;
 
 namespace twicebetter.helpers {
     class TBH_Settings : ScriptableObject {
-        static string GUID;
+        // static string GUID;
+        const  string lastSettingsPathKey = "TBHSp";
         static TBH_Settings settings;
         
         public bool enabled = false;
@@ -31,38 +32,39 @@ namespace twicebetter.helpers {
             }
         }
         
-        public static void         Define() {
-            if (!string.IsNullOrEmpty(AssetDatabase.GUIDToAssetPath(GUID))) return;
+        public static void   Define() {
+            settings = null;
             
-            const string prefix = "HelpersSettings";
-            var os = SystemInfo.operatingSystemFamily;
-            var osstr = os.ToString();
-            var user = System.Environment.UserName;
-            var settingsAssetName = $"{prefix}.{osstr}.{user}.asset";
-            var existingSettings = AssetDatabase.FindAssets("t:" + nameof(TBH_Settings));
-            var match = $"/{settingsAssetName}";
-            for (int i = 0; i < existingSettings.Length; i++) {
-                var existingPath = AssetDatabase.GUIDToAssetPath(existingSettings[i]);
+            var lastSettingsPath = EditorPrefs.GetString(lastSettingsPathKey, null);
+            settings = AssetDatabase.LoadAssetAtPath<TBH_Settings>(lastSettingsPath);
+            
+            if (settings == null) DefineBySearching();
+            
+            if (settings == null) DefineByCreation();
+        }
+        static        void   DefineBySearching() {
+            var existingPaths = AssetDatabase.FindAssets("t:" + nameof(TBH_Settings));
+            var settingsAssetName = SettingsAssetName();
+            if (existingPaths.Length == 0) existingPaths = AssetDatabase.FindAssets(settingsAssetName);
+            var match = $"/{settingsAssetName}.asset";
+            for (int i = 0; i < existingPaths.Length; i++) {
+                var existingPath = AssetDatabase.GUIDToAssetPath(existingPaths[i]);
                 if (match.Equals(existingPath.Substring(existingPath.Length - match.Length))) {
                     settings = AssetDatabase.LoadAssetAtPath<TBH_Settings>(existingPath);
-                    GUID = existingSettings[i];
+                    if (settings != null) EditorPrefs.SetString(lastSettingsPathKey, existingPath);
                     return;
                 }
             }
-            
+        }
+        static        void   DefineByCreation() {
             settings = ScriptableObject.CreateInstance<TBH_Settings>();
-            settings.FillDefaults(os, user);
-            var path = $"Assets/{settingsAssetName}";
+            settings.FillDefaults(SystemInfo.operatingSystemFamily, System.Environment.UserName);
+            var path = "Assets/" + SettingsAssetName() + ".asset";
             AssetDatabase.CreateAsset(settings, path);
-            var guid = AssetDatabase.GUIDFromAssetPath(path);
-            if (guid.Empty()) {
-                settings = null;
-                GUID = null;
-                Debug.LogWarning("TwiceBetter Helpers: Failed to define settings");
-                return;
-            }
-            
-            GUID = guid.ToString();
+            EditorPrefs.SetString(lastSettingsPathKey, path);
+        }
+        static        string SettingsAssetName() {
+            return "HelpersSettings." + SystemInfo.operatingSystemFamily.ToString() + "." + System.Environment.UserName;
         }
         public static TBH_Settings Get() => settings;
         
