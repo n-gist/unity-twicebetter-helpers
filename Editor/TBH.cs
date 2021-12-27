@@ -1,4 +1,3 @@
-using UnityEngine;
 using UnityEditor;
 using System.Threading.Tasks;
 
@@ -24,7 +23,6 @@ namespace twicebetter.helpers {
             if (!settings.enabled) {
                 if (initialized) {
                     TBH_Refresher.Shutdown();
-                    TBH_SceneFocusKeeper.Shutdown();
                     TBH_Hotkeys.Shutdown();
                     initialized = false;
                 }
@@ -33,10 +31,6 @@ namespace twicebetter.helpers {
             
             // Refresher
             TBH_Refresher.Initialize(ref settings.refresher);
-            
-            // Scene Focus Keeper
-            if (settings.keepSceneFocused) TBH_SceneFocusKeeper.Initialize();
-            else TBH_SceneFocusKeeper.Shutdown();
             
             // Yaml Merge Registrator
             if (settings.registerYamlMerge) TBH_YamlMergeRegistrator.Register();

@@ -3,14 +3,12 @@ using UnityEditor;
 
 namespace twicebetter.helpers {
     class TBH_Settings : ScriptableObject {
-        // static string GUID;
         const  string lastSettingsPathKey = "TBHSp";
         const  string noCreationKey = "TBHnc";
         static TBH_Settings settings;
         
         public bool enabled = false;
         public TBH_Refresher.Settings refresher;
-        public bool keepSceneFocused = false;
         public bool registerYamlMerge = false;
         public TBH_Hotkeys.Settings hotkeys;
         
@@ -18,7 +16,7 @@ namespace twicebetter.helpers {
             if (os == OperatingSystemFamily.Windows && user == "Nick") {
                 enabled = true;
                 settings.refresher.mode = TBH_Refresher.Mode.DELAYED;
-                settings.refresher.delay = 30;
+                settings.refresher.delay = 40;
                 settings.hotkeys.enabled = true;
                 settings.hotkeys.deselect.key = KeyCode.Escape;
                 settings.hotkeys.frame.key = KeyCode.F7;
@@ -94,7 +92,6 @@ namespace twicebetter.helpers {
     class TB_Settings_SO_Editor : Editor {
         SerializedProperty enabled;
         SerializedProperty refresher;
-        SerializedProperty keepSceneFocused;
         SerializedProperty registerYamlMerge;
         SerializedProperty hotkeys;
         
@@ -104,7 +101,6 @@ namespace twicebetter.helpers {
             enabled = serializedObject.FindProperty(nameof(enabled));
             
             refresher = serializedObject.FindProperty(nameof(refresher));
-            keepSceneFocused = serializedObject.FindProperty(nameof(keepSceneFocused));
             registerYamlMerge = serializedObject.FindProperty(nameof(registerYamlMerge));
             hotkeys = serializedObject.FindProperty(nameof(hotkeys));
             
@@ -123,9 +119,6 @@ namespace twicebetter.helpers {
             if (enabled.boolValue) {
                 
                 EditorGUILayout.PropertyField(refresher);
-                EditorGUILayout.Space(10);
-                
-                EditorGUILayout.PropertyField(keepSceneFocused);
                 EditorGUILayout.Space(10);
                 
                 EditorGUILayout.PropertyField(registerYamlMerge);
