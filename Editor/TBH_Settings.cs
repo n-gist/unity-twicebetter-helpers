@@ -16,7 +16,7 @@ namespace twicebetter.helpers {
             if (os == OperatingSystemFamily.Windows && user == "Nick") {
                 enabled = true;
                 settings.refresher.mode = TBH_Refresher.Mode.DELAYED;
-                settings.refresher.delay = 40;
+                settings.refresher.delay = 100;
                 settings.hotkeys.enabled = true;
                 settings.hotkeys.deselect.key = KeyCode.Escape;
                 settings.hotkeys.frame.key = KeyCode.F7;

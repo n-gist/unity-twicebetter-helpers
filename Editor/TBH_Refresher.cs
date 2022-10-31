@@ -25,7 +25,7 @@ namespace twicebetter.helpers {
             if (settings.mode != Mode.DELAYED && active) Shutdown();
             if (settings.mode != Mode.INTACT) {
                 TBH_Refresher.settings = settings;
-                const string autoRefreshPrefName = "kAutoRefresh";
+                const string autoRefreshPrefName = "kAutoRefreshMode";
                 var autoRefreshSetting = settings.mode == Mode.ON ? 1 : 0;
                 if (EditorPrefs.GetInt(autoRefreshPrefName, -1) != autoRefreshSetting) EditorPrefs.SetInt(autoRefreshPrefName, autoRefreshSetting);
                 
